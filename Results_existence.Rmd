@@ -1,0 +1,295 @@
+---
+title: "Apology Model"
+author: "Hyun In Park"
+date: "4/29/2021"
+html_document:
+  toc: true
+  theme: united
+---
+## Apology Existence Model
+The goal of this project is to build a model that can detect the existence of apology in text. The textual data consists of 900 TripAdvisor customer review - manager response pairs. For each manager response, MTurk coders rated the existence of apology in the manager's response on a numerical scale from -30 to 30. We took the subset of responses with at least three or more ratings (780 responses), and for each response, took the mean of the ratings for the particular response to determine the overall score for the response. Then, we created a binary variable of "apology existence", with "1" corresponding to the score being greater than 0, and "0" otherwise. This resulted in 519 responses with "1 - apology", and 261 responses with "0 - no apology". To balance the dataset prior to building the supervised learning model, we undersampled responses with "1 - apology", randomly sampling 400 of the responses, and oversampled responses with "0 - no apology", randomly sampling rows to duplicate, and creating 400 responses, resulting in a balanced dataset of 800 observations. <br />  
+
+We built three different versions of models that differ on the features used, along with two baseline models. All three models utilize CV-Lasso with 10-fold Cross Validation technique (adapted from Mike Yeoman's politeness package), while the two baseline models use simple Lasso regression. The first model uses Ngrams (1-gram to 3-gram) of texts as features, the second model uses politeness features from the politeness package, and the third model uses a combination of LIWC features, Text Analyzer features, and politeness features. The fourth model (first baseline model) uses only the "Apology" feature from the politeness features as its single variable, and the fifth model (second baseline model) uses only the word count of texts as its single variable. <br />  
+Finally, for each of the five models, we trained two different versions: a logistic lasso regression-based model on the binary variable of apology, and a linear lasso regression-based model on the continuous variable of apology score. <br />  
+
+### Binary Model Training
+```{r message=FALSE, warning=FALSE}
+#Load releavnt libraries
+library('readr')
+library('politeness')
+library('dplyr')
+library('DTMtools')
+library('ggplot2')
+library('caret')
+
+#Prepare Training/Testing data
+data <- read_csv("existence_bal.csv") #read in data - data contains binary dependent variable (apology existence), as well as all the LIWC and Text Analyzer features
+polite.data <- politeness(data$response, parser="spacy") #get politeness packages
+DV = data$apology #Set DV
+```
+```{r}
+#Prepare the matrix for the third model (Full)
+full_data = cbind(data, polite.data)
+full_data = full_data[,-c(1:22)]
+full_data$num_ratings = NULL
+full_data$mturk_rating = NULL
+full_data$apology = NULL
+full_data$Brand = NULL
+full_data = data.frame(scale(full_data))
+full_data = full_data[ , colSums(is.na(full_data)) == 0]
+#Prepare the matrix for the second model (Politeness)
+polite.data = data.frame(scale(polite.data))
+polite.data = polite.data[ , colSums(is.na(polite.data)) == 0]
+#Prepare the matrix for the first model (Ngram)
+ngram.data<-data.frame(data$response %>% DTMtools::DTM(ngrams = 1:3, stop.words = TRUE))
+ngram.data = data.frame(scale(ngram.data))
+model_names = list('Ngram', 'Politeness', 'Full', 'Apology', 'Word Count')
+#Initialize the ten models
+
+CV.models<-list(ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]),
+                ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]))
+cycles<-2 #Set number of cycles to train the models
+
+#Train the first three models using the politenessProjection function from the politeness package
+for(x in 1:length(CV.models)){
+CV.models[[x]][["guesses"]]<-array(NA,c(length(DV),cycles))
+CV.models[[x]][["coefs"]]<-NA
+}
+```
+```{r}
+for(x in 1:3){
+for(cycle in 1:cycles){
+  m_polite_train <- as.matrix(CV.models[[x]]$exes)
+  foldIDs<-politeness:::foldset(length(DV), 10)
+  tpb<-utils::txtProgressBar(0,10)
+  polite_fit<-rep(NA,10)
+  for(fold in 1:max(foldIDs)){
+    train.fold<-(foldIDs!=fold)
+    test.fold<-(foldIDs==fold)
+    polite_model_fold<-glmnet::cv.glmnet(x=m_polite_train[train.fold,],
+                                             y=DV[train.fold],
+                                             family='binomial')
+    polite_fit[test.fold]<-as.vector(stats::predict(polite_model_fold,
+                                                        newx=m_polite_train[test.fold,],
+                                                        s="lambda.min", type="response"))
+    utils::setTxtProgressBar(tpb,fold)
+  }
+  polite_model<-glmnet::cv.glmnet(x=m_polite_train, y=DV, family='binomial')
+  p_coefs<-as.matrix(stats::coef(polite_model, s="lambda.min"))
+  polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+  CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-polite_coefs
+}
+existence_full_model = polite_model #saved for further testing
+
+#Train the baseline models
+for(x in 4:5){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='binomial')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='binomial')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+```
+
+### Accuracy of Binary Model
+The accuracy of the Ngram model is the highest (although may not be as generalizable), and the accuracy of the Full model is the second highest. All three models perform significantly better than the two baseline models. <br />  
+```{r warning=FALSE}
+#Save and print the accuracy and Confusion Matrix
+for(x in 1:5){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0.5
+CV.models[[x]][['accuracy']] = sum(data$apology == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('Accuracies of the models - Apology Existence - Binary\n')
+for(x in 1:5){cat(model_names[[x]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$apology)))); cat('\n')}
+```
+```{r}
+existence_full_model_prediction = CV.models[[3]][['est']] #saved for later
+```
+
+
+Comparison of the accuracies of the five binary models
+```{r}
+#chart 1
+accuracy1 = c(CV.models[[1]][['accuracy']], CV.models[[2]][['accuracy']], CV.models[[3]][['accuracy']],
+             CV.models[[4]][['accuracy']], CV.models[[5]][['accuracy']])
+labels = c("Ngrams", "Politeness", "Full", "Apology_Only", "WordCount_Only")
+df <- data.frame(labels=labels,
+                acc=round(accuracy1,2))
+ggplot(data=df, aes(x=labels, y=acc)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=acc), vjust=-0.5, color="black", size=3.5)+labs(x='Model')+labs(y='Accuracy')+labs(title='Model Accuracies')+ylim(0,1)+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+
+
+### Visualization of each coefficients of the first three binary models
+
+```{r}
+#visualize each coefficients (first three models only)
+i = 1
+df = data.frame(name=rownames(data.frame(CV.models[[i]]['coefs'])), 
+                coefs=round(data.frame(CV.models[[i]]['coefs'])['coefs'],2))
+rownames(df) = NULL
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(-0.5, 3))+
+  geom_text(aes(label=coefs), vjust=0, hjust = -0.2, color="black", angle = 90, size=1.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Model 1 - Ngram')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+
+i = 2
+df = data.frame(name=rownames(data.frame(CV.models[[i]]['coefs'])), 
+                coefs=round(data.frame(CV.models[[i]]['coefs'])['coefs'],2))
+rownames(df) = NULL
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(-0.5, 2.5))+
+  geom_text(aes(label=coefs), vjust=-0.5, color="black", size=3.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Model 2 - Politeness')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+
+i = 3
+df = data.frame(name=rownames(data.frame(CV.models[[i]]['coefs'])), 
+                coefs=round(data.frame(CV.models[[i]]['coefs'])['coefs'],2))
+rownames(df) = NULL
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=coefs), vjust=-0.5, color="black", size=2.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Model 3 - LIWC, TA, Politeness')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+
+```
+
+### Continuous Model Training
+
+```{r}
+DV = data$mturk_rating
+for(x in 6:8){
+for(cycle in 1:cycles){
+cycleModel<-politenessProjection(df_polite_train = CV.models[[x]]$exes, covar=DV, cv_folds=10)
+CV.models[[x]][["guesses"]][,cycle]<-cycleModel$train_proj
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-cycleModel$train_coefs
+}
+```
+```{r warning=FALSE}
+for(x in 9:10){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='gaussian')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='gaussian')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+
+for(x in 6:10){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0
+CV.models[[x]][['accuracy']] = sum(data$apology == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('\nAccuracies of the models - Apology Existence - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$apology)))); cat('\n')}
+```
+```{r warning=FALSE}
+cat('\nMSE of the models - Apology Existence - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(1/length(DV)*sum((CV.models[[x]][['guess']] - DV)**2)); cat('\n')}
+```
+
+
+
+###Assessing the difference between the Apology_Only & the Full Model (Binary)
+We perform regression analysis using the selected features from the full models, only on the subset of data that has been predicted as "No Apology" by the apology-only model. This analysis looks at what textual componenets other than the "Apology" feature has predictive power in detecting apology.
+```{r}
+#3
+subsetDV = CV.models[[3]][['est']][CV.models[[4]][['est']] == 0]
+subset = full_data[names(CV.models[[3]][['coefs']])][CV.models[[4]][['est']] == 0,]
+m_data = data.frame(y=subsetDV, x=subset)
+polite_model<-lm(y ~ ., data=m_data)
+jtools::summ(polite_model)
+```
+Visualization of coefficients of the regression model
+```{r warning=FALSE}
+df = data.frame(name=rownames(data.frame(polite_model$coefficients)), 
+                coefs=round(data.frame(polite_model$coefficients),2))
+rownames(df) = NULL
+colnames(df) = c('name', 'coefs')
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(-0.1, 0.4))+
+  geom_text(aes(label=coefs), vjust=0.5, hjust = -0.5, color="black", angle = 90, size=2.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Regression Coefficients')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+
+Chart: Count of Occurrences of estimates by the Full Model and the Apology-Only Model
+```{r}
+temp1 = c(length(data$response[(CV.models[[4]][['est']] == 0) & (CV.models[[3]][['est']] == 0)]),
+         length(data$response[(CV.models[[4]][['est']] == 0) & (CV.models[[3]][['est']] == 1)]),
+         length(data$response[(CV.models[[4]][['est']] == 1) & (CV.models[[3]][['est']] == 0)]),
+         length(data$response[(CV.models[[4]][['est']] == 1) & (CV.models[[3]][['est']] == 1)]))
+labels = c("Both No Apology", "Apology - No Apology, Full - Apology", "Apology - Apology, Full - No Apology", "Both Apology")
+df <- data.frame(labels=labels,
+                count=temp1)
+ggplot(data=df, aes(x=labels, y=count)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(0, 500))+
+  geom_text(aes(label=count), vjust=-0.5, color="black", size=3.5)+labs(x='Category')+labs(y='Count')+labs(title='Count of Each Category')+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+Among observations where Apology_Only predicted no apology, what is the accuracy of the Full Model?
+
+```{r}
+pred = CV.models[[3]][['est']][CV.models[[4]][['est']] == 0]
+truth = data$apology[CV.models[[4]][['est']] == 0]
+cat('\nAccuracy of Full Model on observations where Apology_Only Predicted No Apology\n\n'); cat('Accuracy : ')
+cat(100*sum(pred==truth)/length(pred)); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(pred), as.factor(truth)))); cat('\n')
+
+```

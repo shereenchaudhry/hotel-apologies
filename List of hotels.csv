@@ -1,0 +1,389 @@
+,,,,,
+,City,Hotel,Num_reviews,Chain,Star
+,Seattle,11th Avenue Inn Bed and Breakfast,2,,
+,Seattle,Bacon Mansion,2,,
+,Seattle,Best Western Plus Pioneer Square Hotel Downtown,94,Yes,3
+,Seattle,Chelsea Station,1,,
+,Seattle,Comfort Inn & Suites Seattle,54,Yes,3
+,Seattle,Courtyard Seattle Downtown/Lake Union,48,Yes,3
+,Seattle,Courtyard Seattle Downtown/Pioneer Square,98,Yes,3
+,Seattle,Courtyard Seattle Northgate,1,,
+,Seattle,Crowne Plaza Seattle - Downtown,98,Yes,4
+,Seattle,Embassy Suites by Hilton Seattle Downtown Pioneer Square,56,Yes,3
+,Seattle,Even Hotel Seattle - South Lake Union,19,Yes,3
+,Seattle,Executive Hotel Pacific Seattle,100,Yes,3
+,Seattle,Executive Inn by the Space Needle,87,Yes,3
+,Seattle,Four Seasons Hotel Seattle,65,Yes,5
+,Seattle,Gaslight Inn,6,,
+,Seattle,Graduate Seattle,18,Yes,3
+,Seattle,Grand Hyatt Seattle,22,Yes,4
+,Seattle,Hampton Inn & Suites Seattle Downtown,96,Yes,3
+,Seattle,Hilton Garden Inn Seattle Downtown,88,Yes,3
+,Seattle,Hilton Seattle,17,Yes,3
+,Seattle,Holiday Inn Express Hotel & Suites North Seattle - Shoreline,55,Yes,3
+,Seattle,Homewood Suites by Hilton Seattle Convention Center Pike Street,25,Yes,3
+,Seattle,Homewood Suites by Hilton Seattle Downtown,34,Yes,3
+,Seattle,Hotel Andra,94,No,4
+,Seattle,Hotel Ballard,4,,
+,Seattle,Hotel FIVE - A Staypineapple Hotel,94,Yes,3
+,Seattle,"Hotel Nexus, BW Signature Collection",92,No,3
+,Seattle,Hotel Theodore,33,No,4
+,Seattle,Hyatt At Olive 8,20,No,4
+,Seattle,Hyatt House Seattle/Downtown,11,Yes,3
+,Seattle,Hyatt Place Seattle/Downtown,48,Yes,3
+,Seattle,Hyatt Regency Seattle,100,Yes,4
+,Seattle,Inn at the Market,87,No,4
+,Seattle,Kimpton Alexis Hotel,89,No,4
+,Seattle,Kimpton Hotel Monaco Seattle,71,Yes,4
+,Seattle,La Quinta Inn & Suites by Wyndham Seattle Downtown,70,Yes,3
+,Seattle,"Loews Hotel 1000, Seattle",91,Yes,4
+,Seattle,MarQueen Hotel,46,No,3
+,Seattle,Mayflower Park Hotel,55,No,4
+,Seattle,Mediterranean Inn,100,No,3
+,Seattle,MOXY Seattle Downtown,34,Yes,3
+,Seattle,Residence Inn by Marriott Seattle University District,13,Yes,3
+,Seattle,Residence Inn Seattle Downtown / Convention Center,27,Yes,3
+,Seattle,Residence Inn Seattle Downtown/Lake Union,90,Yes,3
+,Seattle,Shafer Baillie Mansion Bed and Breakfast,5,,
+,Seattle,Sheraton Grand Seattle,89,Yes,4
+,Seattle,Silver Cloud Hotel - Seattle Broadway,54,Yes,4
+,Seattle,Silver Cloud Hotel Seattle - University District,21,Yes,3
+,Seattle,Silver Cloud Inn - Seattle Lake Union,48,Yes,3
+,Seattle,SpringHill Suites Seattle Downtown/South Lake Union,97,Yes,3
+,Seattle,Staybridge Suites Seattle - Fremont,29,Yes,3
+,Seattle,Staybridge Suites Seattle Downtown - Lake Union,7,,
+,Seattle,The Fairmont Olympic Seattle,91,Yes,4
+,Seattle,The Maxwell Hotel - A Staypineapple Hotel,100,Yes,3
+,Seattle,The Paramount Hotel,49,No,3
+,Seattle,University Inn - A Staypineapple Hotel,100,Yes,3
+,Seattle,Warwick Seattle,85,Yes,3
+,Seattle,Watertown Hotel - A Staypineapple Hotel,99,Yes,3
+,New York,AC Hotel New York Downtown,22,Yes,3
+,New York,Aloft Harlem,72,Yes,3
+,New York,Broadway Plaza Hotel,39,Yes,3
+,New York,Cambria Hotel New York - Times Square,83,Yes,3
+,New York,Candlewood Suites New York City Times Square,96,Yes,3
+,New York,Carvi NYC,29,Yes,3
+,New York,CitizenM New York Bowery,44,Yes,4
+,New York,Concorde Hotel New York,14,Yes,4
+,New York,Courtyard New York Manhattan Upper East Side,100,Yes,3
+,New York,Courtyard New York Manhattan/Midtown East,98,Yes,3
+,New York,Edge Hotel,14,No,3
+,New York,Element New York Times Square West,95,Yes,3
+,New York,Fairfield by Marriott Inn & Suites New York Manhattan/Times Square,83,Yes,3
+,New York,Fairfield Inn & Suites New York Downtown Manhattan/World Trade Center Area,19,Yes,3
+,New York,Fairfield Inn & Suites New York Manhattan/Times Square South,34,Yes,3
+,New York,Four Points by Sheraton Manhattan SoHo Village,96,Yes,3
+,New York,Four Points by Sheraton Midtown - Times Square,93,Yes,3
+,New York,Four Points by Sheraton New York Downtown,94,Yes,3
+,New York,Gardens Suites Hotel by Affinia,95,Yes,3
+,New York,Hampton Inn Manhattan / Times Square Central,100,Yes,3
+,New York,Hampton Inn Manhattan Grand Central,87,Yes,3
+,New York,Hampton Inn Manhattan/Times Square South,65,Yes,3
+,New York,Hilton Garden Inn New York/Central Park South-Midtown West,89,Yes,3
+,New York,Hilton Garden Inn New York/Manhattan-Chelsea,79,Yes,3
+,New York,Hilton Garden Inn NYC Financial Center/Manhattan Downtown,42,Yes,3
+,New York,Holiday Inn Express Manhattan Times Square South,96,Yes,3
+,New York,Holiday Inn Express New York City - Chelsea,92,Yes,3
+,New York,Holiday Inn Manhattan - Financial District,99,Yes,3
+,New York,Holiday Inn Manhattan 6th Ave - Chelsea,92,Yes,3
+,New York,"Homewood Suites by Hilton New York/Midtown Manhattan Times Square-South, NY",97,Yes,3
+,New York,Hotel Beacon,9,,
+,New York,Hotel Edison,95,No,4
+,New York,Hotel Indigo Lower East Side New York,100,Yes,4
+,New York,Hotel Mulberry,2,,
+,New York,Hotel Scherman,4,,
+,New York,Hyatt Herald Square New York,75,Yes,3
+,New York,Hyatt Place New York Midtown South,100,Yes,3
+,New York,Moxy NYC Times Square,93,Yes,3
+,New York,NobleDEN Hotel,35,No,3
+,New York,Park Central Hotel New York,99,No,4
+,New York,Pod 51 Hotel,53,No,3
+,New York,Radio City Apartments,17,No,3
+,New York,Radisson Hotel New York Midtown-Fifth Avenue,56,Yes,3
+,New York,Residence Inn New York Manhattan/Central Park,100,Yes,3
+,New York,Row NYC Hotel,84,No,4
+,New York,SpringHill Suites New York Manhattan/Times Square South,38,Yes,3
+,New York,Staybridge Suites Times Square - New York City,93,Yes,3
+,New York,"The Bernic Hotel New York City, Tapestry Collection by Hilton",60,Yes,3
+,New York,The Evelyn,14,No,4
+,New York,The Gallivant Times Square,58,No,3
+,New York,The Leon Hotel,37,No,3
+,New York,The Manhattan at Times Square Hotel,82,Yes,3
+,New York,The Marlton Hotel,23,No,3
+,New York,THE PAUL NYC- Hotel New York City,80,No,3
+,New York,The Wall Street Inn,36,No,3
+,New York,Washington Square Hotel,44,No,3
+,New York,Wellington Hotel,1,,
+,New York,YOTEL New York,97,Yes,3
+,Miami,Aloft Miami - Brickell,83,Yes,3
+,Miami,Aloft Miami Airport,44,Yes,3
+,Miami,Cambria Hotel Miami Airport - Blue Lagoon,44,Yes,3
+,Miami,Comfort Suites Miami / Kendall,46,Yes,3
+,Miami,Courtyard by Marriott Miami Airport,95,Yes,3
+,Miami,Courtyard Miami Coconut Grove,100,Yes,3
+,Miami,Courtyard Miami Downtown Brickell Area,100,Yes,3
+,Miami,Courtyard Miami West/FL Turnpike,32,Yes,3
+,Miami,Doubletree by Hilton Grand Hotel Biscayne Bay,89,Yes,3
+,Miami,DoubleTree by Hilton Hotel Miami Airport & Convention Center,48,Yes,3
+,Miami,Element Miami International Airport,98,Yes,3
+,Miami,Even Hotels Miami Airport,24,Yes,3
+,Miami,Fairfield Inn & Suites Miami Airport South,99,Yes,3
+,Miami,Fortune House Hotel,25,No,4
+,Miami,Four Points by Sheraton Coral Gables,38,Yes,3
+,Miami,Four Points by Sheraton Miami Airport,31,Yes,3
+,Miami,Hampton By Hilton Miami-Coconut Grove/Coral Gables,92,Yes,3
+,Miami,Hampton Inn & Suites by Hilton - Miami Brickell Downtown,100,Yes,3
+,Miami,Hampton Inn & Suites by Hilton Miami Airport South - Blue Lagoon,74,Yes,3
+,Miami,Hampton Inn & Suites Miami Midtown,32,Yes,3
+,Miami,Hampton Inn Miami Airport East,57,Yes,3
+,Miami,Hilton Garden Inn Miami Airport West,100,Yes,3
+,Miami,Hilton Garden Inn Miami Brickell South,22,Yes,3
+,Miami,Hilton Miami Dadeland,22,Yes,3
+,Miami,Holiday Inn Express & Suites Miami Airport East,64,Yes,3
+,Miami,Holiday Inn Express Miami Airport Doral Area,91,Yes,3
+,Miami,Holiday Inn Miami North ‚Äì I-95,2,,
+,Miami,Holiday Inn Port of Miami Downtown,92,Yes,3
+,Miami,Homewood Suites by Hilton Miami Downtown/Brickell,77,Yes,3
+,Miami,Homewood Suites Miami-Airport / Blue Lagoon,97,Yes,3
+,Miami,Homewood Suites Miami-Airport West,100,Yes,3
+,Miami,Hyatt Centric Brickell Miami,52,Yes,4
+,Miami,HYATT House Miami Airport,92,Yes,3
+,Miami,La Quinta Inn & Suites by Wyndham Miami Airport West,81,Yes,3
+,Miami,Marriott's Villas at Doral,44,Yes,4
+,Miami,Miami Airport Marriott,97,Yes,3
+,Miami,Miami International Airport Hotel,100,No,3
+,Miami,Real Living Residences,3,,
+,Miami,Regency Miami Airport,15,Yes,3
+,Miami,Residence Inn by Marriott Miami Airport,66,Yes,3
+,Miami,Residence Inn by Marriott Miami Coconut Grove,86,Yes,3
+,Miami,Residence Inn by Marriott Miami West/FL Turnpike,14,Yes,3
+,Miami,Shalimar Motel,32,No,3
+,Miami,Sheraton Miami Airport Hotel & Executive Meeting Center,91,Yes,3
+,Miami,SpringHill Suites Miami Airport South,70,Yes,3
+,Miami,SpringHill Suites Miami Doral,1,,
+,Miami,SpringHill Suites Miami Downtown/Medical Center,89,Yes,3
+,Miami,Stay Alfred Brickell,87,Yes,3
+,Miami,Staybridge Suites Miami International Airport,26,Yes,3
+,Miami,The Copper Door B&B,2,,
+,Miami,The Lofts on the Park,2,,
+,Miami,TownePlace Suites by Marriott Miami Airport,28,Yes,3
+,Miami,Vagabond Hotel Miami,18,No,3
+,LA,Best Western Plus Sunset Plaza Hotel,51,Yes,3
+,LA,Blvd Hotel & Spa,87,Yes,3
+,LA,BLVD Hotel & Suites,70,Yes,3
+,LA,Courtyard by Marriott Santa Monica,51,Yes,3
+,LA,Courtyard Los Angeles LAX/Century Boulevard,2,,
+,LA,Crescent Hotel Beverly Hills,30,No,3
+,LA,DoubleTree by Hilton Hotel San Pedro,54,Yes,3
+,LA,Elan Hotel,87,No,3
+,LA,Embassy Suites by Hilton LAX North,94,Yes,3
+,LA,Farmer's Daughter Hotel,56,No,3
+,LA,Four Points by Sheraton Los Angeles International Airport,68,Yes,3
+,LA,Freehand Los Angeles,47,Yes,4
+,LA,Gateway Hotel Santa Monica,94,Yes,3
+,LA,Grafton on Sunset,99,No,3
+,LA,"H Hotel Los Angeles, Curio Collection by Hilton",89,Yes,4
+,LA,Holiday Inn Express Los Angeles-LAX Airport,96,Yes,3
+,LA,Hollywood Hotel,94,No,3
+,LA,Homewood Suites by Hilton Los Angeles International Airport,57,Yes,3
+,LA,Hotel Angeleno,56,No,3
+,LA,Hotel Erwin,62,No,4
+,LA,Hotel Figueroa,46,No,4
+,LA,Hotel Indigo Los Angeles Downtown,91,Yes,4
+,LA,Hotel June,3,,
+,LA,Hotel MdR-A DoubleTree by Hilton Hotel,89,Yes,3
+,LA,Hyatt Regency Los Angeles International Airport,97,Yes,3
+,LA,Inn at Venice Beach,52,No,3
+,LA,La Quinta Inn & Suites by Wyndham Lax,50,Yes,3
+,LA,Lexen Hotel - North Hollywood,12,No,3
+,LA,Maison 140 Beverly Hills,84,No,3
+,LA,Malibu Country Inn,3,,
+,LA,Ocean Park Inn,45,No,3
+,LA,Ocean View Hotel,97,No,3
+,LA,Palihouse Santa Monica,88,Yes,3
+,LA,Residence Inn by Marriott Los Angeles L.A. LIVE,51,Yes,3
+,LA,The Dixie Hollywood,69,No,3
+,LA,The Garland,98,No,3
+,LA,The Georgian Hotel,93,No,3
+,LA,The Kinney,64,No,3
+,LA,The LINE Hotel Los Angeles,88,Yes,4
+,LA,Wyndham Santa Monica at the Pier,97,Yes,3
+,Houston,AC Hotel by Marriott Houston Downtown,6,,
+,Houston,Baymont by Wyndham Houston/Westchase,74,Yes,3
+,Houston,Best Western Galleria Inn & Suites,57,Yes,3
+,Houston,Best Western Plus Hobby Airport Inn & Suites,84,Yes,3
+,Houston,Club Quarters Hotel in Houston,1,,
+,Houston,"Country Inn & Suites by Radisson, Houston Northwest, TX",63,Yes,2
+,Houston,Courtyard Houston by The Galleria,75,Yes,3
+,Houston,Days Inn & Suites by Wyndham Houston Hobby Airport,80,Yes,2
+,Houston,DoubleTree by Hilton Hotel & Suites Houston by the Galleria,99,Yes,3
+,Houston,Embassy Suites by Hilton Houston Downtown,100,Yes,3
+,Houston,Embassy Suites by Hilton Houston Near the Galleria,71,Yes,3
+,Houston,Embassy Suites By Hilton Houston West - Katy,36,Yes,3
+,Houston,Extended Stay America - Houston - Galleria - Uptown,54,Yes,2
+,Houston,Extended Stay America - Houston - Med. Ctr. - NRG Park - Braeswood Blvd,74,Yes,2
+,Houston,Extended Stay America - Houston - Willowbrook,45,Yes,2
+,Houston,Hilton Americas - Houston,96,Yes,4
+,Houston,Hilton Garden Inn Houston Hobby Airport,16,Yes,3
+,Houston,Hilton Garden Inn Houston Westbelt,30,Yes,3
+,Houston,Hilton Houston Post Oak by the Galleria,93,Yes,4
+,Houston,Holiday Inn Express & Suites Houston - Hobby Airport Area,3,,
+,Houston,Holiday Inn Express & Suites Houston S - Medical Ctr Area,13,Yes,2
+,Houston,Holiday Inn Express Houston-Downtown Convention Center,54,Yes,2
+,Houston,Holiday Inn Houston Downtown,44,Yes,3
+,Houston,Home2 Suites by Hilton Houston Westchase,5,,
+,Houston,Homewood Suites by Hilton Houston Downtown,41,Yes,3
+,Houston,Homewood Suites By Hilton Houston Memorial,12,Yes,3
+,Houston,Hotel Alessandra,17,No,4
+,Houston,Hotel Derek Houston Galleria,88,No,4
+,Houston,Hotel Granduca Houston,81,No,5
+,Houston,Hotel Houston Katy Freeway,8,,
+,Houston,"Hotel ICON, Autograph Collection",94,No,4
+,Houston,Hotel Indigo Houston at the Galleria,85,Yes,3
+,Houston,Hotel ZaZa Houston Memorial City,7,,
+,Houston,Hotel ZaZa Houston Museum District,71,No,4
+,Houston,Houston Airport Marriott at George Bush Intercontinental,94,Yes,3
+,Houston,HYATT House Houston/Galleria,88,Yes,3
+,Houston,Hyatt Place Houston Bush Airport,49,Yes,3
+,Houston,Hyatt Place Houston/Galleria,69,Yes,3
+,Houston,Hyatt Regency Houston,83,Yes,4
+,Houston,Hyatt Regency Houston/Galleria,97,Yes,4
+,Houston,JW Marriott Houston Downtown,84,Yes,4
+,Houston,La Quinta Inn & Suites by Wyndham Houston - Westchase,6,,
+,Houston,La Quinta Inn & Suites by Wyndham Houston Galleria Area,83,Yes,2
+,Houston,La Quinta Inn & Suites by Wyndham Houston Willowbrook,15,Yes,2
+,Houston,La Quinta Inn by Wyndham Houston Cy-Fair,29,Yes,2
+,Houston,La Quinta Inn by Wyndham Houston Greenway Plaza Medical Area,16,Yes,2
+,Houston,"Magnolia Hotel Houston, A Tribute Portfolio Hotel",70,Yes,4
+,Houston,Marriott Marquis Houston,86,Yes,4
+,Houston,Red Roof Inn Houston - Westchase,93,Yes,2
+,Houston,Red Roof PLUS+ & Suites Houston ‚Äì IAH Airport SW,12,Yes,2
+,Houston,Royal Sonesta Houston Galleria,100,Yes,4
+,Houston,SureStay Plus By Best Western Hotel Houston Medical Center,6,,
+,Houston,"The Houstonian Hotel, Club & Spa",40,No,4
+,Houston,The Lancaster Hotel,43,No,4
+,Houston,The Moran CITYCENTRE,63,No,4
+,Houston,The Post Oak Hotel at Uptown Houston,20,No,5
+,Houston,The Westin Houston Memorial City,76,Yes,4
+,Houston,The Westin Oaks Houston At The Galleria,97,Yes,4
+,Houston,The Whitehall Houston,71,Yes,4
+,Houston,Towneplace Suites Houston Brookhollow,14,Yes,2
+,Houston,Wyndham Houston - Medical Center Hotel and Suites,76,Yes,3
+,Boston,Abigayle's Bed and Breakfast,6,,
+,Boston,AC Hotel by Marriott Boston Cleveland Circle,21,Yes,3
+,Boston,AC Hotel by Marriott Boston Downtown,35,Yes,4
+,Boston,Aloft Boston Seaport District,98,Yes,3
+,Boston,Boston Harbor Hotel,97,No,5
+,Boston,Boston Marriott Long Wharf,97,Yes,4
+,Boston,Boston Park Plaza,97,Yes,4
+,Boston,Boston Yacht Haven Inn & Marina,4,,
+,Boston,Cambria Hotel Boston Downtown,12,Yes,3
+,Boston,citizenM Boston North Station,52,Yes,4
+,Boston,Clarendon Square,6,,
+,Boston,Club Quarters Hotel in Boston,100,Yes,3
+,Boston,Comfort Inn - Boston,73,Yes,3
+,Boston,Courtyard Boston Copley Square,85,Yes,3
+,Boston,Courtyard Boston Downtown,91,Yes,3
+,Boston,Courtyard Boston Downtown/North Station,32,Yes,3
+,Boston,Courtyard by Marriott Boston Logan Airport,96,Yes,3
+,Boston,DoubleTree by Hilton Hotel Boston - Downtown,90,Yes,3
+,Boston,DoubleTree by Hilton Hotel Boston Bayside,99,Yes,3
+,Boston,DoubleTree Suites by Hilton Boston - Cambridge,100,Yes,3
+,Boston,Element Boston Seaport District,42,Yes,3
+,Boston,Embassy Suites by Hilton Boston at Logan Airport,97,Yes,3
+,Boston,enVision Hotel Boston - Longwood,69,Yes,3
+,Boston,"Fairmont Copley Plaza, Boston",59,Yes,4
+,Boston,Four Seasons Hotel Boston,77,Yes,5
+,Boston,Hampton Inn & Suites Boston Crosstown Center,100,Yes,3
+,Boston,Hilton Garden Inn Boston Logan Airport,77,Yes,3
+,Boston,Holiday Inn Express Boston,95,Yes,3
+,Boston,Hotel Commonwealth,100,No,4
+,Boston,Hotel Indigo Boston Garden,24,Yes,3
+,Boston,Hyatt Centric Faneuil Hall Boston,24,Yes,4
+,Boston,InterContinental Boston,98,Yes,4
+,Boston,Loews Boston Hotel,95,Yes,4
+,Boston,"Mandarin Oriental, Boston",44,Yes,5
+,Boston,"Marriott Vacation Club Pulse at Custom House, Boston",24,Yes,3
+,Boston,Newbury Guest House,23,No,3
+,Boston,No. 284,4,,
+,Boston,Residence Inn Boston Downtown/Seaport,23,Yes,3
+,Boston,Residence Inn Boston Harbor On Tudor Wharf,98,Yes,3
+,Boston,Residence Inn by Marriott Boston Back Bay/Fenway,99,Yes,3
+,Boston,Revere Hotel Boston Common,99,No,4
+,Boston,Seaport Hotel,89,No,4
+,Boston,Studio Allston Hotel,64,No,2
+,Boston,The Boxer Boston,73,No,4
+,Boston,The Colonnade Hotel,46,No,4
+,Boston,The Eliot Hotel,78,No,4
+,Boston,The Godfrey Hotel Boston,51,Yes,4
+,Boston,The Inn At Longwood Medical,2,,
+,Boston,The Inn At St Botolph,25,Yes,3
+,Boston,"The Langham, Boston",32,Yes,4
+,Boston,The Revolution Hotel,27,No,2
+,Boston,The Verb Hotel,99,No,3
+,Boston,The Whitney Hotel Boston,2,,
+,Boston,Wyndham Boston Beacon Hill,53,Yes,3
+,Boston,XV Beacon,7,,
+,Chicago,21c Museum Hotel Chicago - MGallery,1,,
+,Chicago,Best Western Grant Park Hotel,75,Yes,2
+,Chicago,Best Western River North Hotel,99,Yes,3
+,Chicago,Central Loop Hotel,29,No,3
+,Chicago,Chicago South Loop Hotel,43,No,3
+,Chicago,City Suites Hotel,25,No,3
+,Chicago,Claridge House Chicago,45,Yes,4
+,Chicago,"Club Quarters Hotel, Wacker at Michigan",24,Yes,3
+,Chicago,Embassy Suites by Hilton Chicago Downtown,99,Yes,3
+,Chicago,Eurostars Magnificent Mile,22,Yes,4
+,Chicago,Freehand Chicago,70,Yes,3
+,Chicago,Hampton Inn & Suites Chicago - Downtown,100,Yes,3
+,Chicago,Hilton Chicago/Magnificent Mile Suites,99,Yes,4
+,Chicago,Hilton Garden Inn Chicago Downtown South Loop,10,Yes,3
+,Chicago,Home2 Suites by Hilton Chicago River North,18,Yes,3
+,Chicago,Homewood Suites by Hilton Chicago Downtown South Loop,13,Yes,3
+,Chicago,Homewood Suites by Hilton Chicago-Downtown,100,Yes,3
+,Chicago,Hotel Chicago West Loop,72,No,3
+,Chicago,Hotel Essex,19,No,4
+,Chicago,Hotel Julian,27,No,4
+,Chicago,Hotel Versey Days Inn by Wyndham Chicago,84,Yes,3
+,Chicago,Hyatt House Chicago / West Loop - Fulton Market,26,Yes,2
+,Chicago,Hyatt Place Chicago Midway Airport,45,Yes,3
+,Chicago,Hyatt Place Chicago/Downtown - The Loop,99,Yes,3
+,Chicago,Hyatt Regency Chicago,20,Yes,4
+,Chicago,Ivy Hotel,96,No,4
+,Chicago,Kimpton Hotel Allegro,89,Yes,4
+,Chicago,Kimpton Hotel Palomar Chicago,88,Yes,4
+,Chicago,Kinzie Hotel,98,No,4
+,Chicago,La Quinta Inn & Suites by Wyndham Chicago Downtown,60,Yes,3
+,Chicago,Loews Chicago Hotel,97,Yes,4
+,Chicago,"LondonHouse Chicago, Curio Collection by Hilton",47,Yes,4
+,Chicago,Majestic Hotel,99,No,3
+,Chicago,Millennium Knickerbocker Chicago,99,No,4
+,Chicago,Ohio House Motel,99,No,2
+,Chicago,Radisson Blu Aqua Hotel,96,Yes,4
+,Chicago,Raffaello Chicago,74,No,4
+,Chicago,Renaissance Chicago O'Hare Suites Hotel,62,Yes,4
+,Chicago,River Hotel,42,No,3
+,Chicago,Royal Sonesta Chicago Riverfront,97,Yes,4
+,Chicago,Silversmith Hotel Chicago Downtown,80,No,4
+,Chicago,Sofitel Chicago Magnificent Mile,85,Yes,5
+,Chicago,Sophy Hyde Park,24,No,4
+,Chicago,"Staypineapple, An Iconic Hotel, The Loop Chicago",100,Yes,4
+,Chicago,Swissotel Chicago,63,Yes,4
+,Chicago,The Congress Plaza Hotel & Convention Center,51,Yes,3
+,Chicago,The Godfrey Hotel Chicago,79,Yes,4
+,Chicago,The Hotel at Midtown,13,No,4
+,Chicago,"The Langham, Chicago",68,Yes,5
+,Chicago,The Peninsula Chicago,66,Yes,5
+,Chicago,"The Ritz-Carlton, Chicago",81,Yes,5
+,Chicago,The St. Clair Hotel - Magnificent Mile,33,Yes,2
+,Chicago,The Talbott Hotel,48,No,4
+,Chicago,The Whitehall Hotel,71,No,4
+,Chicago,The Willows,17,No,3
+,Chicago,Thompson Chicago,57,Yes,4
+,Chicago,Travelodge by Wyndham Downtown Chicago,59,Yes,2
+,Chicago,Trump International Hotel & Tower Chicago,59,Yes,5
+,Chicago,Viceroy Chicago,58,Yes,5
+,Chicago,Virgin Hotels Chicago,89,Yes,4
+,Chicago,W Chicago - Lakeshore,73,Yes,4
+,Chicago,Waldorf Astoria Chicago,74,Yes,5

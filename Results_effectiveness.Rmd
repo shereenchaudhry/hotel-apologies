@@ -1,0 +1,383 @@
+---
+title: "Results_effectiveness"
+author: "Hyun In Park"
+date: "6/28/2021"
+output: html_document
+---
+## Apology Effectiveness Models
+"Visit" and "Satisfaction" are two measures of effectiveness of apology. "Visit" indicates whether or not the reader would be willing to visit the hotel again after reading the response from the manager. "Satisfaction" indicates whether or not the reader is satisfied with the response from the manager. The score of a response is computed as the average rating among the ratings given by the MTurk coders for the particular response. Along with the score, we also created a binary variable for both "visit" and "satisfaction", with "1" corresponding to the score being greater than 0, and "0" otherwise <br /> 
+The first alteration trains the models on binary measures of "Visit" and "Satisfaction", with "1" if the score is greater than zero, and "0" otherwise, and uses logistic regression with Lasso (identical to the effectiveness model). The second alteration trains the models on the continuous measure of "Visit" and "Satisfaction", represented directly by the score, and uses linear regression with Lasso. The third alteration uses binary dependent variable of "Visit" and "Satisfaction", except that the numer of "1"s and "0"s are more evened out compared to the first alteration, with "1" being scores greater than (mean of the scores) + 0.5(SD of the scores), and "0" being scores less than (mean of the scores) - 0.5(SD of the scores). <br />  
+The accuracies of the models are not as high as the "Effectiveness" model, and this could potentially be due to the "Effectiveness" measures being much more subjective measures that vary more from person to person, and from situation to situation.
+
+### Visit
+```{r message=FALSE, warning=FALSE}
+#Load releavnt libraries
+library('readr')
+library('politeness')
+library('dplyr')
+library('DTMtools')
+library('ggplot2')
+library('caret')
+
+#Prepare Training/Testing data
+data <- read_csv("visit_bal.csv")
+
+polite.data <- politeness(data$response, parser="spacy") #get politeness features with politeness package
+
+DV = data$visit #set DV's
+DV_cont = data$mturk_rating
+full_data = cbind(data, polite.data) #full data consists of LIWC, TextAnalyzer, and Politeness features
+#remove unnecessary columns
+full_data = full_data[,-c(1:22)]
+full_data$num_ratings = NULL
+full_data$mturk_rating = NULL
+full_data$visit = NULL
+full_data$Brand = NULL
+polite.data = data.frame(scale(polite.data))
+polite.data = polite.data[ , colSums(is.na(polite.data)) == 0]
+full_data = data.frame(scale(full_data))
+full_data = full_data[ , colSums(is.na(full_data)) == 0]
+ngram.data<-data.frame(data$response %>% DTMtools::DTM(ngrams = 1:3, stop.words = TRUE))
+ngram.data = data.frame(scale(ngram.data))
+CV.models<-list(ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]),
+                ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]))
+cycles<-2
+for(x in 1:length(CV.models)){
+CV.models[[x]][["guesses"]]<-array(NA,c(length(DV),cycles))
+CV.models[[x]][["coefs"]]<-NA
+}
+for(x in 1:3){
+for(cycle in 1:cycles){
+cycleModel<-politenessProjection(df_polite_train = CV.models[[x]]$exes, covar=DV, cv_folds=10)
+CV.models[[x]][["guesses"]][,cycle]<-cycleModel$train_proj
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-cycleModel$train_coefs
+}
+for(x in 4:5){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='binomial')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='binomial')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+
+
+for(x in 1:5){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0.5
+CV.models[[x]][['accuracy']] = sum(data$visit == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('\nAccuracies of the models - Visit - Binary\n')
+for(x in 1:5){cat(model_names[[x]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$visit)))); cat('\n')}
+```
+
+
+
+```{r}
+accuracy1 = c(CV.models[[1]][['accuracy']], CV.models[[2]][['accuracy']], CV.models[[3]][['accuracy']],
+             CV.models[[4]][['accuracy']], CV.models[[5]][['accuracy']])
+labels = c("Ngrams", "Politeness", "Full", "Apology_Only", "WordCount_Only")
+df <- data.frame(labels=labels,
+                acc=round(accuracy1,2))
+ggplot(data=df, aes(x=labels, y=acc)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=acc), vjust=-0.5, color="black", size=3.5)+labs(x='Model')+labs(y='Accuracy')+labs(title='Visit Model Accuracies')+ylim(0,1)+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+```{r}
+#Using Existence Model to predict visit
+pred = as.vector(predict(existence_full_model, as.matrix(CV.models[[3]]$exes), type="response")) > 0.5
+cat('\nAccuracy of Existence Full Model in predicting willingness to visit\n')
+cat(sum(pred == DV)/length(DV))
+accuracy2 = c(CV.models[[3]][['accuracy']], sum(pred == DV)/length(DV))
+labels = c('Visit Model', 'Apology Existence Model')
+df <- data.frame(labels=labels,
+                acc=round(accuracy2,2))
+ggplot(data=df, aes(x=labels, y=acc)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=acc), vjust=-0.5, color="black", size=3.5)+labs(x='Model')+labs(y='Accuracy')+labs(title='Visit Model vs. Apology Existence Model\nin Predicting Visit')+ylim(0,1)+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+```{r}
+#Confusion Matrix of Existence Model on Visit
+subsetDV = CV.models[[3]][['est']][pred == 0]
+subset = full_data[names(CV.models[[3]][['coefs']])][pred == 0,]
+m_data = data.frame(y=subsetDV, x=subset)
+polite_model<-lm(y ~ ., data=m_data)
+df = data.frame(name=rownames(data.frame(polite_model$coefficients)), 
+                coefs=round(data.frame(polite_model$coefficients),2))
+rownames(df) = NULL
+colnames(df) = c('name', 'coefs')
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(-0.1, 0.4))+
+  geom_text(aes(label=coefs), vjust=0.5, hjust = -0.5, color="black", angle = 90, size=2.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Regression Coefficients')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+prediction = CV.models[[3]][['est']][pred == 0]
+truth = data$visit[pred == 0]
+cat('\nAccuracy of Visit Full Model on observations where Existence Model Predicted No Apology\n\n'); cat('Accuracy : ')
+cat(100*sum(prediction==truth)/length(prediction)); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(prediction), as.factor(truth)))); cat('\n')
+```
+
+
+
+```{r message=FALSE, warning=FALSE}
+DV = DV_cont
+
+cycles<-2
+
+for(x in 6:8){
+for(cycle in 1:cycles){
+cycleModel<-politenessProjection(df_polite_train = CV.models[[x]]$exes, covar=DV, cv_folds=10)
+CV.models[[x]][["guesses"]][,cycle]<-cycleModel$train_proj
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-cycleModel$train_coefs
+}
+
+for(x in 9:10){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='gaussian')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='gaussian')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+
+for(x in 6:10){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0
+CV.models[[x]][['accuracy']] = sum(data$visit == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('\nAccuracies of the models - Visit - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$visit)))); cat('\n')}
+```
+```{r}
+cat('\nMSE of the models - Visit - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(1/length(DV)*sum((CV.models[[x]][['guess']] - DV)**2)); cat('\n')}
+```
+
+
+### Satisfaction
+```{r message=FALSE, warning=FALSE}
+data <- read_csv("satisfied_bal.csv")
+
+polite.data <- politeness(data$response, parser="spacy") #get politeness features with politeness package
+
+DV = data$satisfied #set DV
+DV_cont = data$mturk_rating
+full_data = cbind(data, polite.data) #full data consists of LIWC, TextAnalyzer, and Politeness features
+
+#remove unnecessary columns
+full_data = full_data[,-c(1:22)]
+full_data$num_ratings = NULL
+full_data$mturk_rating = NULL
+full_data$satisfied = NULL
+full_data$Brand = NULL
+polite.data = data.frame(scale(polite.data))
+polite.data = polite.data[ , colSums(is.na(polite.data)) == 0]
+full_data = data.frame(scale(full_data))
+full_data = full_data[ , colSums(is.na(full_data)) == 0]
+```
+```{r}
+ngram.data<-data.frame(data$response %>% DTMtools::DTM(ngrams = 1:3, stop.words = TRUE))
+ngram.data = data.frame(scale(ngram.data))
+CV.models<-list(ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]),
+                ngrams=list(exes=ngram.data), politeness=list(exes=polite.data), full=list(exes=full_data),
+                apology=list(exes=full_data[['Apology']]), wordcount=list(exes=full_data[['WC']]))
+cycles<-2
+for(x in 1:length(CV.models)){
+CV.models[[x]][["guesses"]]<-array(NA,c(length(DV),cycles))
+CV.models[[x]][["coefs"]]<-NA
+}
+for(x in 1:3){
+for(cycle in 1:cycles){
+cycleModel<-politenessProjection(df_polite_train = CV.models[[x]]$exes, covar=DV, cv_folds=10)
+CV.models[[x]][["guesses"]][,cycle]<-cycleModel$train_proj
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-cycleModel$train_coefs
+}
+for(x in 4:5){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='binomial')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='binomial')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+
+
+
+for(x in 1:5){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0.5
+CV.models[[x]][['accuracy']] = sum(data$satisfied == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('\nAccuracies of the models - Satisfaction - Binary\n')
+for(x in 1:5){cat(model_names[[x]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$satisfied)))); cat('\n')}
+```
+
+```{r}
+#Using Existence Model to predict visit
+pred = as.vector(predict(existence_full_model, as.matrix(full_data), type="response")) > 0.5
+cat('\nAccuracy of Existence Full Model in predicting satisfaction\n')
+cat(sum(pred == DV)/length(DV))
+accuracy2 = c(CV.models[[3]][['accuracy']], sum(pred == DV)/length(DV))
+labels = c('Satisfaction Model', 'Apology Existence Model')
+df <- data.frame(labels=labels,
+                acc=round(accuracy2,2))
+ggplot(data=df, aes(x=labels, y=acc)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=acc), vjust=-0.5, color="black", size=3.5)+labs(x='Model')+labs(y='Accuracy')+labs(title='Satisfaction Model vs. Apology Existence Model\nin Predicting Visit')+ylim(0,1)+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+
+```
+
+```{r}
+#Confusion Matrix of Existence Model on Visit
+subsetDV = CV.models[[3]][['est']][pred == 0]
+subset = full_data[names(CV.models[[3]][['coefs']])][pred == 0,]
+m_data = data.frame(y=subsetDV, x=subset)
+polite_model<-lm(y ~ ., data=m_data)
+df = data.frame(name=rownames(data.frame(polite_model$coefficients)), 
+                coefs=round(data.frame(polite_model$coefficients),2))
+rownames(df) = NULL
+colnames(df) = c('name', 'coefs')
+ggplot(data=df, aes(x=name, y=coefs)) +
+  geom_bar(stat="identity", fill="blue")+coord_cartesian(ylim = c(-0.1, 0.4))+
+  geom_text(aes(label=coefs), vjust=0.5, hjust = -0.5, color="black", angle = 90, size=2.5)+labs(x='Feature')+labs(y='Coef')+labs(title='Regression Coefficients')+theme_bw()+
+  theme(axis.text=element_text(size=10),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+prediction = CV.models[[3]][['est']][pred == 0]
+truth = data$satisfied[pred == 0]
+cat('\nAccuracy of Satisfied Full Model on observations where Existence Model Predicted No Apology\n\n'); cat('Accuracy : ')
+cat(100*sum(prediction==truth)/length(prediction)); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(prediction), as.factor(truth)))); cat('\n')
+```
+
+
+
+
+```{r}
+accuracy1 = c(CV.models[[1]][['accuracy']], CV.models[[2]][['accuracy']], CV.models[[3]][['accuracy']],
+             CV.models[[4]][['accuracy']], CV.models[[5]][['accuracy']])
+labels = c("Ngrams", "Politeness", "Full", "Apology_Only", "WordCount_Only")
+df <- data.frame(labels=labels,
+                acc=round(accuracy1,2))
+ggplot(data=df, aes(x=labels, y=acc)) +
+  geom_bar(stat="identity", fill="blue")+
+  geom_text(aes(label=acc), vjust=-0.5, color="black", size=3.5)+labs(x='Model')+labs(y='Accuracy')+labs(title='Satisfaction Model Accuracies')+ylim(0,1)+theme_bw()+
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=13,face="bold"),
+        plot.title=element_text(size=20, face='bold', hjust=0.5))
+```
+
+```{r message=FALSE, warning=FALSE}
+DV = DV_cont
+
+cycles<-2
+
+for(x in 6:8){
+for(cycle in 1:cycles){
+cycleModel<-politenessProjection(df_polite_train = CV.models[[x]]$exes, covar=DV, cv_folds=10)
+CV.models[[x]][["guesses"]][,cycle]<-cycleModel$train_proj
+}
+CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+CV.models[[x]][["coefs"]]<-cycleModel$train_coefs
+}
+for(x in 9:10){
+  for(cycle in 1:cycles){
+    m_polite_train <- as.matrix(CV.models[[x]]$exes)
+    foldIDs<-politeness:::foldset(length(DV), 10)
+    tpb<-utils::txtProgressBar(0,10)
+    polite_fit<-rep(NA,10)
+    for(fold in 1:max(foldIDs)){
+      train.fold<-(foldIDs!=fold)
+      test.fold<-(foldIDs==fold)
+      m_data = data.frame(y=DV[train.fold], x=m_polite_train[train.fold])
+      m_test = data.frame(x=m_polite_train[test.fold,])
+      polite_model_fold<-glm(y ~ x, data=m_data, family='gaussian')
+      polite_fit[test.fold]<-as.vector(predict(polite_model_fold, m_test, type="response"))
+      utils::setTxtProgressBar(tpb,fold)
+    }     
+    polite_model<-glm(DV ~ CV.models[[x]]$exes, family='gaussian')
+    p_coefs<-as.matrix(stats::coef(polite_model))
+    polite_coefs<-p_coefs[(!(rownames(p_coefs)=="(Intercept)"))&p_coefs!=0,]
+    CV.models[[x]][["guesses"]][,cycle]<-polite_fit
+  }
+  CV.models[[x]][["guess"]]<-rowMeans(CV.models[[x]][["guesses"]],na.rm=TRUE)
+  CV.models[[x]][["coefs"]]<-polite_coefs
+}
+
+for(x in 6:10){
+CV.models[[x]][['est']] <- CV.models[[x]][['guess']] > 0
+CV.models[[x]][['accuracy']] = sum(data$satisfied == CV.models[[x]][['est']]) / dim(data)[1]
+}
+cat('\nAccuracies of the models - Satisfaction - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(100*CV.models[[x]][['accuracy']]); cat('%'); cat('\n')
+  print(as.table(confusionMatrix(as.factor(CV.models[[x]][['est']]), as.factor(data$satisfied)))); cat('\n')}
+cat('\nMSE of the models - Satisfaction - Continuous\n')
+for(x in 6:10){cat(model_names[[x-5]]); cat(' : '); cat(1/length(DV)*sum((CV.models[[x]][['guess']] - DV)**2)); cat('\n')}
+```
